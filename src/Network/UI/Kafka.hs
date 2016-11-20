@@ -69,7 +69,7 @@ consumerLoop clientId address topic consumer =
       )
 
 
-type ProducerCallback = IO Event
+type ProducerCallback = IO [Event]
 
 
 producerLoop :: KafkaClientId -> KafkaAddress -> TopicName -> Sensor -> ProducerCallback -> IO (ExitAction, LoopAction)
@@ -79,13 +79,12 @@ producerLoop clientId address topic sensor producer =
     let
       loop =
         do
-          event <- liftIO producer
+          events <- liftIO producer
           void
             $ produceMessages
-            [
-              TopicAndMessage topic
-                $ makeKeyedMessage (pack sensor) (toStrict $ encode event)
-            ]
+            $ map
+              (TopicAndMessage topic . makeKeyedMessage (pack sensor) . toStrict . encode)
+              events
           running <- liftIO $ isEmptyMVar exitFlag
           when running
             loop

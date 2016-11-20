@@ -16,6 +16,7 @@ keyboardLoop client address topic sensor =
     hSetBuffering stdin NoBuffering
     hSetEcho stdin False
     producerLoop client address topic sensor
+      $ fmap (: [])
       $ KeyEvent
       <$> getChar
       <*> return Nothing

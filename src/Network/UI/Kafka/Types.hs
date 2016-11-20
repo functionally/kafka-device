@@ -8,6 +8,8 @@ module Network.UI.Kafka.Types (
 , Toggle(..)
 , Modifiers(..)
 , Button(..)
+, Hand(..)
+, Finger(..)
 ) where
 
 
@@ -68,6 +70,20 @@ data Event =
     , joystickForward   :: Double
     , joystickUpward    :: Double
     , buttons           :: [ButtonState]
+    }
+  | FingerEvent
+    {
+      hand            :: Hand
+    , finger          :: Finger
+    , pointerPosition :: (Double, Double, Double)
+    }
+  | PointerEvent
+    {
+      pointerPosition :: (Double, Double, Double)
+    }
+  | EventError
+    {
+      message :: String
     }
     deriving (Eq, Generic, Ord, Read, Show)
 
@@ -135,3 +151,27 @@ instance ToJSON Toggle
 instance Binary Toggle
 
 instance Serialize Toggle
+
+
+data Hand = RightHand | LeftHand
+  deriving (Bounded, Enum, Eq, Generic, Ord, Read, Show)
+
+instance FromJSON Hand
+
+instance ToJSON Hand
+
+instance Binary Hand
+
+instance Serialize Hand
+
+
+data Finger = Thumb | IndexFinger | MiddleFinger | RingFinger | Pinky
+  deriving (Bounded, Enum, Eq, Generic, Ord, Read, Show)
+
+instance FromJSON Finger
+
+instance ToJSON Finger
+
+instance Binary Finger
+
+instance Serialize Finger
