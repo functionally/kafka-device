@@ -2,7 +2,7 @@ UI device events via a Kafka message broker
 ===========================================
 
 
-This package contains functions passive UI device events to topics on a Kafka message broker.
+This package contains functions passive UI device events to topics on a [Kafka message broker](https://kafka.apache.org/).
 
 
 The simple Kafka client that produces events from the keyboard can be run, for example, as follows:
