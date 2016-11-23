@@ -9,6 +9,6 @@ The simple Kafka client that produces events from the keyboard can be run, for e
 
 	cabal run kafka-device-keyboard -- keyboard-client localhost 9092 events keyboard
 
-The simple Kafka clietn that consumes events can be run, for example, as follows:
+The simple Kafka client that consumes events can be run, for example, as follows:
 
 	cabal run kafka-device -- consumer-client localhost 9092 events
