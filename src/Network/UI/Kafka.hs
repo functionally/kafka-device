@@ -1,9 +1,24 @@
+{-|
+Module      :  Network.UI.Kafka
+Copyright   :  (c) 2016 Brian W Bush
+License     :  MIT
+Maintainer  :  Brian W Bush <consult@brianwbush.info>
+Stability   :  Experimental
+Portability :  Stable
+
+Produce and consume events.
+-}
+
+
 module Network.UI.Kafka (
+-- * Types
   Sensor
 , LoopAction
 , ExitAction
+-- * Consumption
 , ConsumerCallback
 , consumerLoop
+-- * Production
 , ProducerCallback
 , producerLoop
 ) where
@@ -22,19 +37,30 @@ import Network.Kafka.Producer (makeKeyedMessage, produceMessages)
 import Network.Kafka.Protocol (FetchResponse(..), KafkaBytes(..), Key(..), Message(..), TopicName, Value(..))
 
 
+-- | A name for a sensor.
 type Sensor = String
 
 
+-- | Action for iterating to produce or consume events.
 type LoopAction = IO (Either KafkaClientError ())
 
 
+-- | Action for ending iteration.
 type ExitAction = IO ()
 
 
-type ConsumerCallback = Sensor -> Event -> IO ()
+-- | Callback for consuming events from a sensor.
+type ConsumerCallback =  Sensor -- ^ The name of the sensor producing the event.
+                      -> Event  -- ^ The event.
+                      -> IO ()  -- ^ THe action for consuming the event.
 
 
-consumerLoop :: KafkaClientId -> KafkaAddress -> TopicName -> ConsumerCallback -> IO (ExitAction, LoopAction)
+-- | Consume events.
+consumerLoop :: KafkaClientId               -- ^ A Kafka client identifier for the consumer.
+             -> KafkaAddress                -- ^ The address of the Kafka broker.
+             -> TopicName                   -- ^ The Kafka topic name.
+             -> ConsumerCallback            -- ^ The consumer callback.
+             -> IO (ExitAction, LoopAction) -- ^ Action to create the exit and loop actions.
 consumerLoop clientId address topic consumer =
   do
     exitFlag <- newEmptyMVar :: IO (MVar ())
@@ -69,10 +95,17 @@ consumerLoop clientId address topic consumer =
       )
 
 
-type ProducerCallback = IO [Event]
+-- | Callback for producing events from a sensor.
+type ProducerCallback = IO [Event] -- ^ Action for producing events.
 
 
-producerLoop :: KafkaClientId -> KafkaAddress -> TopicName -> Sensor -> ProducerCallback -> IO (ExitAction, LoopAction)
+-- | Produce events.
+producerLoop :: KafkaClientId               -- ^ A Kafka client identifier for the producer.
+             -> KafkaAddress                -- ^ The address of the Kafka broker.
+             -> TopicName                   -- ^ The Kafka topic name.
+             -> Sensor                      -- ^ The name of the sensor producing the event.
+             -> ProducerCallback            -- ^ The producer callback.
+             -> IO (ExitAction, LoopAction) -- ^ Action to create the exit and loop actions.
 producerLoop clientId address topic sensor producer =
   do
     exitFlag <- newEmptyMVar :: IO (MVar ())

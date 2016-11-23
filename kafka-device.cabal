@@ -1,5 +1,5 @@
 name:                kafka-device
-version:             0.1.1.0
+version:             0.1.2.0
 synopsis:            UI device events via a Kafka message broker
 description:         This package contains functions for passing UI device events to topics on a Kafka message broker.
 license:             MIT

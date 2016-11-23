@@ -1,7 +1,20 @@
+{-|
+Module      :  Main
+Copyright   :  (c) 2016 Brian W Bush
+License     :  MIT
+Maintainer  :  Brian W Bush <consult@brianwbush.info>
+Stability   :  Experimental
+Portability :  Stable
+
+Simple producver of keyboard events from standard input.
+-}
+
+
 {-# LANGUAGE OverloadedStrings #-}
 
 
 module Main (
+-- * Entry point
   main
 ) where
 
@@ -11,6 +24,7 @@ import Network.UI.Kafka.Keyboard (keyboardLoop)
 import System.Environment (getArgs)
 
 
+-- | The main action.
 main :: IO ()
 main =
   do
@@ -30,4 +44,4 @@ main =
               sensor
           result <- loop
           either print return result
-      _ -> putStrLn "USAGE: kafka-device-keyboard client host port topic senosr"
+      _ -> putStrLn "USAGE: kafka-device-keyboard client host port topic sensor"

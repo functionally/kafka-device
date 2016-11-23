@@ -1,4 +1,17 @@
+{-|
+Module      :  Network.UI.Kafka.Keyboard
+Copyright   :  (c) 2016 Brian W Bush
+License     :  MIT
+Maintainer  :  Brian W Bush <consult@brianwbush.info>
+Stability   :  Experimental
+Portability :  Stable
+
+Produce events from standard input.
+-}
+
+
 module Network.UI.Kafka.Keyboard (
+-- * Event handling 
   keyboardLoop
 ) where
 
@@ -10,7 +23,12 @@ import Network.UI.Kafka.Types (Event(KeyEvent))
 import System.IO (BufferMode(NoBuffering), hSetBuffering, hSetEcho, stdin)
 
 
-keyboardLoop :: KafkaClientId -> KafkaAddress -> TopicName -> Sensor -> IO (ExitAction, LoopAction)
+-- | Produce keyboard events from standard input.
+keyboardLoop :: KafkaClientId               -- ^ A Kafka client identifier for the producer.
+             -> KafkaAddress                -- ^ The address of the Kafka broker.
+             -> TopicName                   -- ^ The Kafka topic name.
+             -> Sensor                      -- ^ The name of the sensor producing events.
+             -> IO (ExitAction, LoopAction) -- ^ Action to create the exit and loop actions.
 keyboardLoop client address topic sensor =
   do
     hSetBuffering stdin NoBuffering
