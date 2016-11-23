@@ -1,5 +1,5 @@
 name:                kafka-device
-version:             0.1.2.4
+version:             0.1.2.5
 synopsis:            UI device events via a Kafka message broker
 description:         This package contains functions for passing UI device events to topics on a Kafka message broker.
 license:             MIT
@@ -13,7 +13,7 @@ cabal-version:       >= 1.10
 stability:           Experimental
 homepage:            https://bitbucket.org/functionally/kafka-device
 bug-reports:         https://bwbush.atlassian.net/projects/HKADE/issues/
-package-url:         https://bitbucket.org/functionally/kafka-device/downloads/kafka-device-0.1.2.4.tar.gz
+package-url:         https://bitbucket.org/functionally/kafka-device/downloads/kafka-device-0.1.2.5.tar.gz
 
 extra-source-files:  ReadMe.md
 
