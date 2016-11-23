@@ -11,7 +11,6 @@ Event types.
 
 
 {-# LANGUAGE DeriveGeneric    #-}
-{-# LANGUAGE FlexibleContexts #-}
 
 
 module Network.UI.Kafka.Types (
