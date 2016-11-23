@@ -6,7 +6,7 @@ Maintainer  :  Brian W Bush <consult@brianwbush.info>
 Stability   :  Experimental
 Portability :  Stable
 
-Simple producver of keyboard events from standard input.
+Simple producer of keyboard events from standard input.
 -}
 
 
