@@ -6,11 +6,8 @@ Maintainer  :  Brian W Bush <consult@brianwbush.info>
 Stability   :  Experimental
 Portability :  Stable
 
-Simple consumer that echos UI events to the console.
+Simple consumer that echos UI events from a Kafka topic to the console.
 -}
-
-
-{-# LANGUAGE OverloadedStrings #-}
 
 
 module Main (
@@ -43,4 +40,4 @@ main =
               $ curry print
           result <- loop
           either print return result
-      _ -> putStrLn "USAGE: kafka-keyboard client host port topic"
+      _ -> putStrLn "USAGE: kafka-device client host port topic"

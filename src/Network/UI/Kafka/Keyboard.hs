@@ -6,7 +6,7 @@ Maintainer  :  Brian W Bush <consult@brianwbush.info>
 Stability   :  Experimental
 Portability :  Stable
 
-Produce events from standard input.
+Produce events on a Kafka topic from standard input.
 -}
 
 
@@ -23,7 +23,7 @@ import Network.UI.Kafka.Types (Event(KeyEvent))
 import System.IO (BufferMode(NoBuffering), hSetBuffering, hSetEcho, stdin)
 
 
--- | Produce keyboard events from standard input.
+-- | Produce keyboard events on a Kafka topic from standard input.
 keyboardLoop :: KafkaClientId               -- ^ A Kafka client identifier for the producer.
              -> KafkaAddress                -- ^ The address of the Kafka broker.
              -> TopicName                   -- ^ The Kafka topic name.

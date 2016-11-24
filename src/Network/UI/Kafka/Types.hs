@@ -149,68 +149,68 @@ instance Serialize Modifiers
 
 -- | A special key.
 data SpecialKey =
-  -- | F1
+    -- | F1
     KeyF1
-  -- | F2
-  | KeyF2
-  -- | F3
-  | KeyF3
-  -- | F4
-  | KeyF4
-  -- | F5
-  | KeyF5
-  -- | F6
-  | KeyF6
-  -- | F7
-  | KeyF7
-  -- | F8
-  | KeyF8
-  -- | F9
-  | KeyF9
-  -- | F10
-  | KeyF10
-  -- | F11
-  | KeyF11
-  -- | F12
-  | KeyF12
-  -- | left arrow
-  | KeyLeft
-  -- | up arrow
-  | KeyUp
-  -- | right arrow
-  | KeyRight
-  -- | down arrow
-  | KeyDown
-  -- | page up
-  | KeyPageUp
-  -- | page down
-  | KeyPageDown
-  -- | home
-  | KeyHome
-  -- | end
-  | KeyEnd
-  -- | insert
-  | KeyInsert
-  -- | number lock
-  | KeyNumLock
-  -- | begin
-  | KeyBegin
-  -- | delete
-  | KeyDelete
-  -- | left shift
-  | KeyShiftL
-  -- | right shift
-  | KeyShiftR
-  -- | left control
-  | KeyCtrlL
-  -- | right control
-  | KeyCtrlR
-  -- | left alt
-  | KeyAltL
-  -- | right alt
-  | KeyAltR
-  -- | unknown, with a specified index
-  | KeyUnknown Int
+  | -- | F2
+    KeyF2
+  | -- | F3
+    KeyF3
+  | -- | F4
+    KeyF4
+  | -- | F5
+    KeyF5
+  | -- | F6
+    KeyF6
+  | -- | F7
+    KeyF7
+  | -- | F8
+    KeyF8
+  | -- | F9
+    KeyF9
+  | -- | F10
+    KeyF10
+  | -- | F11
+    KeyF11
+  | -- | F12
+    KeyF12
+  | -- | left arrow
+    KeyLeft
+  | -- | up arrow
+    KeyUp
+  | -- | right arrow
+    KeyRight
+  | -- | down arrow
+    KeyDown
+  | -- | page up
+    KeyPageUp
+  | -- | page down
+    KeyPageDown
+  | -- | home
+    KeyHome
+  | -- | end
+    KeyEnd
+  | -- | insert
+    KeyInsert
+  | -- | number lock
+    KeyNumLock
+  | -- | begin
+    KeyBegin
+  | -- | delete
+    KeyDelete
+  | -- | left shift
+    KeyShiftL
+  | -- | right shift
+    KeyShiftR
+  | -- | left control
+    KeyCtrlL
+  | -- | right control
+    KeyCtrlR
+  | -- | left alt
+    KeyAltL
+  | -- | right alt
+    KeyAltR
+  | -- | unknown, with a specified index
+    KeyUnknown Int
   deriving (Eq, Generic, Ord, Read, Show)
 
 instance FromJSON SpecialKey
@@ -228,20 +228,20 @@ type ButtonState = (Button, Toggle)
 
 -- | A button.
 data Button =
-  -- | left mouse button
+    -- | left mouse button
     LeftButton
-  -- |  middle mouse button
-  | MiddleButton
-  -- | right mouse button
-  | RightButton
-  -- | mouse wheel upward
-  | WheelUp
-  -- | mouse wheel downward
-  | WheelDown
-  -- | button specified by an index
-  | IndexButton Int
-  -- | button specified by a letter
-  | LetterButton Char
+  | -- |  middle mouse button
+    MiddleButton
+  | -- | right mouse button
+    RightButton
+  | -- | mouse wheel upward
+    WheelUp
+  | -- | mouse wheel downward
+    WheelDown
+  | -- | button specified by an index
+    IndexButton Int
+  | -- | button specified by a letter
+    LetterButton Char
   deriving (Eq, Generic, Ord, Read, Show)
 
 instance FromJSON Button
@@ -255,10 +255,10 @@ instance Serialize Button
 
 -- | The state of a button.
 data Toggle =
-  -- | pressed down
+    -- | pressed down
     Down
-  -- | released and up
-  | Up
+  | -- | released and up
+    Up
   deriving (Bounded, Enum, Eq, Generic, Ord, Read, Show)
 
 instance FromJSON Toggle
@@ -272,10 +272,10 @@ instance Serialize Toggle
 
 -- | A hand.
 data Hand =
-  -- | right hand
+    -- | right hand
     RightHand
-  -- | left hand
-  | LeftHand
+  | -- | left hand
+    LeftHand
   deriving (Bounded, Enum, Eq, Generic, Ord, Read, Show)
 
 instance FromJSON Hand
@@ -289,16 +289,16 @@ instance Serialize Hand
 
 -- | A finger.
 data Finger =
-  -- | thumb
+    -- | thumb
     Thumb
-  -- | first or index finger
-  | IndexFinger
-  -- | second or middle finger
-  | MiddleFinger
-  -- | third of ring finger
-  | RingFinger
-  -- | fourth finger or pinky
-  | Pinky
+  | -- | first or index finger
+    IndexFinger
+  | -- | second or middle finger
+    MiddleFinger
+  | -- | third of ring finger
+    RingFinger
+  | -- | fourth finger or pinky
+    Pinky
   deriving (Bounded, Enum, Eq, Generic, Ord, Read, Show)
 
 instance FromJSON Finger

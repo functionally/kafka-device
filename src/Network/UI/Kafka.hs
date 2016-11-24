@@ -6,7 +6,7 @@ Maintainer  :  Brian W Bush <consult@brianwbush.info>
 Stability   :  Experimental
 Portability :  Stable
 
-Produce and consume events.
+Produce and consume events on Kafka topics.
 -}
 
 
@@ -55,7 +55,7 @@ type ConsumerCallback =  Sensor -- ^ The name of the sensor producing the event.
                       -> IO ()  -- ^ THe action for consuming the event.
 
 
--- | Consume events.
+-- | Consume events for a Kafka topic.
 consumerLoop :: KafkaClientId               -- ^ A Kafka client identifier for the consumer.
              -> KafkaAddress                -- ^ The address of the Kafka broker.
              -> TopicName                   -- ^ The Kafka topic name.
@@ -84,7 +84,6 @@ consumerLoop clientId address topic consumer =
           running <- liftIO $ isEmptyMVar exitFlag
           when running
             $ loop offset'
-      
     return
       (
         void $ tryPutMVar exitFlag ()
@@ -99,7 +98,7 @@ consumerLoop clientId address topic consumer =
 type ProducerCallback = IO [Event] -- ^ Action for producing events.
 
 
--- | Produce events.
+-- | Produce events for a Kafka topic.
 producerLoop :: KafkaClientId               -- ^ A Kafka client identifier for the producer.
              -> KafkaAddress                -- ^ The address of the Kafka broker.
              -> TopicName                   -- ^ The Kafka topic name.

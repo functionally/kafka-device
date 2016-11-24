@@ -6,11 +6,8 @@ Maintainer  :  Brian W Bush <consult@brianwbush.info>
 Stability   :  Experimental
 Portability :  Stable
 
-Simple producer of keyboard events from standard input.
+Simple producer of keyboard events from standard input to a Kafka topic.
 -}
-
-
-{-# LANGUAGE OverloadedStrings #-}
 
 
 module Main (
