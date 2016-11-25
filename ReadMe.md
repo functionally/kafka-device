@@ -20,5 +20,5 @@ See also
 
 *   https://hackage.haskell.org/package/kafka-device-joystick/: events from Linux joysticks
 *   https://hackage.haskell.org/package/kafka-device-glut/: events from GLUT-compatible devices
-*   https://hackage.haskell.org/package/kafka-device-vrpn/: events from VRPN devices
+*   https://hackage.haskell.org/package/kafka-device-spacenav/: events from SpaceNavigator devices
 *   https://hackage.haskell.org/package/kafka-device-leap/: events from Leap Motion devices
