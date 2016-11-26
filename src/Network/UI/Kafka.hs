@@ -52,7 +52,7 @@ type ExitAction = IO ()
 -- | Callback for consuming events from a sensor.
 type ConsumerCallback =  Sensor -- ^ The name of the sensor producing the event.
                       -> Event  -- ^ The event.
-                      -> IO ()  -- ^ THe action for consuming the event.
+                      -> IO ()  -- ^ The action for consuming the event.
 
 
 -- | Consume events for a Kafka topic.

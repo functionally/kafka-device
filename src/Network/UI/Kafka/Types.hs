@@ -110,7 +110,21 @@ data Event =
     AnalogEvent
     {
       axis        :: Int    -- ^ The axis for the value.
-    , analogValue :: Double -- ^ The value, betwee +1 and -1.
+    , analogValue :: Double -- ^ The value, between +1 and -1.
+    }
+  | -- | A dial value.
+    DialEvent
+    {
+      axis      :: Int    -- ^ The axis for the value.
+    , dialValue :: Double -- ^ The value, between 0 and +1.
+    }
+  | -- | Location in space.
+    LocationEvent {
+      location :: (Double, Double, Double)  -- ^ The location vector in space.
+    }
+  | -- | Orientation in space.
+    OrientationEvent {
+      orientation :: (Double, Double, Double, Double) -- ^ The orientation quaternion in space.
     }
   | -- | An error.
     EventError
