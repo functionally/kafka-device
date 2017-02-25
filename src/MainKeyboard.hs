@@ -16,7 +16,7 @@ module Main (
 ) where
 
 
-import Data.String (IsString(fromString))
+import Network.UI.Kafka (TopicConnection(TopicConnection))
 import Network.UI.Kafka.Keyboard (keyboardLoop)
 import System.Environment (getArgs)
 
@@ -35,9 +35,7 @@ main =
           putStrLn $ "Sensor name:   " ++ sensor
           (_, loop) <-
             keyboardLoop
-              (fromString client)
-              (fromString host, toEnum $ read port)
-              (fromString topic)
+              (TopicConnection client (host, read port) topic)
               sensor
           result <- loop
           either print return result

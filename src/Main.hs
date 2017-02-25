@@ -16,8 +16,7 @@ module Main (
 ) where
 
 
-import Data.String (IsString(fromString))
-import Network.UI.Kafka (consumerLoop)
+import Network.UI.Kafka (TopicConnection(TopicConnection), consumerLoop)
 import System.Environment (getArgs)
 
 
@@ -34,9 +33,7 @@ main =
           putStrLn $ "Kafka topic:   " ++ topic
           (_, loop) <-
             consumerLoop
-              (fromString client)
-              (fromString host, toEnum $ read port)
-              (fromString topic)
+              (TopicConnection client (host, read port) topic)
               $ curry print
           result <- loop
           either print return result
