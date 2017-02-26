@@ -1,6 +1,6 @@
 {-|
-Module      :  Network.UI.Kafka
-Copyright   :  (c) 2016 Brian W Bush
+Module      :  $Header$
+Copyright   :  (c) 2016-17 Brian W Bush
 License     :  MIT
 Maintainer  :  Brian W Bush <consult@brianwbush.info>
 Stability   :  Experimental
