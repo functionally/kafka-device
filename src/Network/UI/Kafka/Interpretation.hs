@@ -10,7 +10,6 @@ Interpret user-interfaces events on Kafka topics.
 -}
 
 
-
 {-# LANGUAGE DeriveGeneric        #-}
 {-# LANGUAGE OverloadedStrings    #-}
 {-# LANGUAGE RecordWildCards      #-}
@@ -53,28 +52,28 @@ instance ToJSON a => ToJSON (Quaternion a)
 
 
 -- | Instructions for interpreting user-interface events from Kafka.
-data Interpretation a =
+data Interpretation a b =
   TrackInterpretation
   {
     kafka       :: TopicConnection      -- ^ How to connect to Kafka.
   , sensor      :: Sensor               -- ^ The name of the sensor.
-  , path        :: FilePath             -- ^ The path the the device.
-  , xAxis       :: AxisInterpretation a -- ^ Interpretation for the x-axis.
-  , yAxis       :: AxisInterpretation a -- ^ Interpretation for the y-axis.
-  , zAxis       :: AxisInterpretation a -- ^ Interpretation for the z-axis.
-  , phiAxis     :: AxisInterpretation a -- ^ Interpretation for the Euler angle about the x-axis.
-  , thetaAxis   :: AxisInterpretation a -- ^ Interpretation for the Euler angle about the y-axis.
-  , psiAxis     :: AxisInterpretation a -- ^ Interpretation for the Euler angle about the z-axis.
-  , location    :: V3 a                 -- ^ The initial location, (x, y, z).
-  , orientation :: V3 a                 -- ^ The initial orientation, (phi, theta, psi).
+  , device      :: a                    -- ^ The device.
+  , xAxis       :: AxisInterpretation b -- ^ Interpretation for the x-axis.
+  , yAxis       :: AxisInterpretation b -- ^ Interpretation for the y-axis.
+  , zAxis       :: AxisInterpretation b -- ^ Interpretation for the z-axis.
+  , phiAxis     :: AxisInterpretation b -- ^ Interpretation for the Euler angle about the x-axis.
+  , thetaAxis   :: AxisInterpretation b -- ^ Interpretation for the Euler angle about the y-axis.
+  , psiAxis     :: AxisInterpretation b -- ^ Interpretation for the Euler angle about the z-axis.
+  , location    :: V3 b                 -- ^ The initial location, (x, y, z).
+  , orientation :: V3 b                 -- ^ The initial orientation, (phi, theta, psi).
   , flying      :: Bool                 -- ^ Whether to interpret displacements as being relative to the current orientation.
   , resetButton :: Maybe Int            -- ^ The button number for resetting the location and orientation to their initial values.
   }
     deriving (Eq, Generic, Read, Show)
 
-instance FromJSON a => FromJSON (Interpretation a)
+instance (FromJSON a, FromJSON b) => FromJSON (Interpretation a b)
 
-instance ToJSON a => ToJSON (Interpretation a)
+instance (ToJSON a, ToJSON b) => ToJSON (Interpretation a b)
 
 
 -- | Instructions for interpreting an axis.
@@ -95,13 +94,13 @@ instance ToJSON a => ToJSON (AxisInterpretation a)
 
 
 -- | Translate a SpaceNavigator event on Linux into events for Kafka.
-translate :: (Conjugate a, Epsilon a, Num a, Ord a, RealFloat a)
-          => MVar (State a)    -- ^ Reference to the current location and orientation.
-          -> AnalogHandler a b -- ^ How to handle raw analog events.
-          -> ButtonHandler a b -- ^ How to handle raw button events.
-          -> Interpretation a  -- ^ The interpretation.
-          -> b                 -- ^ A raw event.
-          -> IO [Event]        -- ^ The corresponding events for Kafka.
+translate :: (Conjugate b, Epsilon b, Num b, Ord b, RealFloat b)
+          => MVar (State b)     -- ^ Reference to the current location and orientation.
+          -> AnalogHandler b c  -- ^ How to handle raw analog events.
+          -> ButtonHandler b c  -- ^ How to handle raw button events.
+          -> Interpretation a b -- ^ The interpretation.
+          -> c                  -- ^ A raw event.
+          -> IO [Event]         -- ^ The corresponding events for Kafka.
 translate state analogHandler buttonHandler TrackInterpretation{..} event =
   do
     (location0, orientation0) <- readMVar state
@@ -113,10 +112,10 @@ translate state analogHandler buttonHandler TrackInterpretation{..} event =
       clamp AxisInterpretation{..} =
           maybe id ((maximum .) . (. return) . (:)) lowerBound
         . maybe id ((minimum .) . (. return) . (:)) upperBound
-      (location1@(V3 x y z), orientation1@(Quaternion q0 (V3 qx qy qz))) =
+      (location1, orientation1) =
         case (buttonHandler event, analogHandler event) of
           (Just (number, pressed), _) -> if pressed && Just number == resetButton
-                                           then (location, eulerToQuaternion orientation)
+                                           then (location, fromEuler orientation)
                                            else (location0, orientation0)
           (_, Just (number, setting)) -> let
                                            euler = adjust number setting <$> V3 phiAxis thetaAxis psiAxis
@@ -128,28 +127,37 @@ translate state analogHandler buttonHandler TrackInterpretation{..} event =
                                                <$> axes
                                                <*> location0
                                                ^+^ (if flying then (orientation0 `rotate`) else id) delta
-                                           , eulerToQuaternion euler
+                                           , fromEuler euler
                                              * orientation0
                                            )
           (_, _)                      -> (location0, orientation0)
-      [x', y', z', q0', qx', qy', qz'] = realToFrac <$> [x, y, z, q0, qx, qy, qz]
     unless (location0 == location1 && orientation0 == orientation1)
       . void
       $ swapMVar state (location1, orientation1)
     return
-      . (if location0    /= location1    then (LocationEvent    (     x' , y' , z' ) :) else id)
-      . (if orientation0 /= orientation1 then (OrientationEvent (q0', qx', qy', qz') :) else id)
+      . (if location0    /= location1    then (fromV3 location1            :) else id)
+      . (if orientation0 /= orientation1 then (fromQuaternion orientation1 :) else id)
       $ case buttonHandler event of
           Just (number, pressed) -> [ButtonEvent (IndexButton number, if pressed then Down else Up)]
           Nothing                -> []
 
 -- | Convert from Euler angles to a quaternion.
-eulerToQuaternion :: (Epsilon a, Num a, RealFloat a) => V3 a -> Quaternion a
-eulerToQuaternion (V3 phi theta psi) =
+fromEuler :: (Epsilon a, Num a, RealFloat a) => V3 a -> Quaternion a
+fromEuler (V3 phi theta psi) =
   let
     [ex, ey, ez] = basis
   in
     ez `axisAngle` psi * ey `axisAngle` theta * ex `axisAngle` phi
+
+
+-- | Convert from 'V3' to 'Event'.
+fromV3 :: Real a => V3 a -> Event
+fromV3 (V3 x y z) = LocationEvent (realToFrac x, realToFrac y, realToFrac z)
+
+
+-- | Convert from 'Quaternion' to 'Event'.
+fromQuaternion :: Real a => Quaternion a -> Event
+fromQuaternion (Quaternion w (V3 x y z)) = OrientationEvent (realToFrac w, realToFrac x, realToFrac y, realToFrac z)
 
 
 -- | Location and orientation.
@@ -157,23 +165,29 @@ type State a = (V3 a, Quaternion a)
 
 
 -- | How to handle raw analog events.
-type AnalogHandler a b = b -> Maybe (Int, a)
+type AnalogHandler a b =  b              -- ^ The raw event.
+                       -> Maybe (Int, a) -- ^ The axis number and value.
 
 
 -- | How to handle raw button events.
-type ButtonHandler a b = b -> Maybe (Int, Bool)
+type ButtonHandler a b =  b                 -- ^ The raw event.
+                       -> Maybe (Int, Bool) -- ^ The button number and whether the button is depressed.
 
 
 -- | Repeatedly interpret events.
-interpretationLoop :: (Conjugate a, Epsilon a, Num a, Ord a, RealFloat a)
-                   => AnalogHandler a b -- ^ How to handle raw analog events.
-                   -> ButtonHandler a b -- ^ How to handle raw button events.
-                   -> Interpretation a  -- ^ The interpretation.
-                   -> IO b              -- ^ Action for getting the next raw event.
+interpretationLoop :: (Conjugate b, Epsilon b, Num b, Ord b, RealFloat b)
+                   => AnalogHandler b c           -- ^ How to handle raw analog events.
+                   -> ButtonHandler b c           -- ^ How to handle raw button events.
+                   -> Interpretation a b          -- ^ The interpretation.
+                   -> IO c                        -- ^ Action for getting the next raw event.
                    -> IO (ExitAction, LoopAction) -- ^ Action to create the exit and loop actions.
 interpretationLoop analogHandler buttonHandler interpretation@TrackInterpretation{..} action =
   do
-    state <- newMVar (location, eulerToQuaternion orientation)
+    first <- newMVar True
+    state <- newMVar (location, fromEuler orientation)
     producerLoop kafka sensor
-      $ translate state analogHandler buttonHandler interpretation
-      =<< action
+      $ do
+        isFirst <- readMVar first
+        if isFirst
+          then swapMVar first False >> return [fromV3 location, fromQuaternion $ fromEuler orientation]
+          else action >>= translate state analogHandler buttonHandler interpretation
