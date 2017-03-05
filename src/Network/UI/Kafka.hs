@@ -104,7 +104,7 @@ consumerLoop TopicConnection{..} consumer =
           liftIO
             $ do
               mapM_ (uncurry consumer) messages
-              threadDelay 7500 -- FIXME: Is a thread delay really necessary in order not to miss messages?  Why?
+              threadDelay 100 -- FIXME: Is a thread delay really necessary in order not to miss messages?  Why?
           running <- liftIO $ isEmptyMVar exitFlag
           when running
             $ loop offset'
