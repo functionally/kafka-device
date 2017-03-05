@@ -160,6 +160,11 @@ fromQuaternion :: Real a => Quaternion a -> Event
 fromQuaternion (Quaternion w (V3 x y z)) = OrientationEvent (realToFrac w, realToFrac x, realToFrac y, realToFrac z)
 
 
+-- | Convert from degrees to radians.
+fromDegrees :: (Floating a, Num a) => a -> a
+fromDegrees = (* pi) . (/ 180)
+
+
 -- | Location and orientation.
 type State a = (V3 a, Quaternion a)
 
@@ -184,10 +189,10 @@ interpretationLoop :: (Conjugate b, Epsilon b, Num b, Ord b, RealFloat b)
 interpretationLoop analogHandler buttonHandler interpretation@TrackInterpretation{..} action =
   do
     first <- newMVar True
-    state <- newMVar (location, fromEuler orientation)
+    state <- newMVar (location, fromEuler $ fromDegrees <$> orientation)
     producerLoop kafka sensor
       $ do
         isFirst <- readMVar first
         if isFirst
-          then swapMVar first False >> return [fromV3 location, fromQuaternion $ fromEuler orientation]
+          then swapMVar first False >> return [fromV3 location, fromQuaternion $ fromEuler $ fromDegrees <$> orientation]
           else action >>= translate state analogHandler buttonHandler interpretation
