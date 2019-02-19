@@ -1,12 +1,12 @@
 name:                kafka-device
-version:             0.2.1.5
+version:             1.0.0.0
 synopsis:            UI device events via a Kafka message broker
 description:         This package contains functions for passing UI device events to topics on a Kafka message broker \<<https://kafka.apache.org/>\>.  Also see \<<https://hackage.haskell.org/package/kafka-device-joystick/>\>, \<<https://hackage.haskell.org/package/kafka-device-glut/>\>, \<<https://hackage.haskell.org/package/kafka-device-spacenav/>\>, \<<https://hackage.haskell.org/package/kafka-device-leap/>\>.
 license:             MIT
 license-file:        LICENSE
 author:              Brian W Bush <consult@brianwbush.info>
 maintainer:          Brian W Bush <consult@brianwbush.info>
-copyright:           (c) 2016-17 Brian W Bush
+copyright:           (c) 2016-19 Brian W Bush
 category:            Hardware
 build-type:          Simple
 cabal-version:       >= 1.10
@@ -26,20 +26,22 @@ library
                     Network.UI.Kafka.Interpretation
                     Network.UI.Kafka.Keyboard
                     Network.UI.Kafka.Types
-  build-depends:    base         >= 4.8 && < 5
-               ,    aeson        >= 0.11.3
-               ,    binary       >= 0.7.2
-               ,    bytestring   >= 0.10.6
-               ,    cereal       >= 0.5.4
-               ,    linear       >= 1.20.5
-               ,    milena       >= 0.5.0
-               ,    mtl          >= 2.2.1
+  build-depends:    base         >= 4.10 && < 4.11
+               ,    aeson
+               ,    binary
+               ,    bytestring
+               ,    cereal
+               ,    linear
+               ,    milena
+               ,    mtl
   hs-source-dirs:   src
   ghc-options:      -Wall
   default-language: Haskell2010
 
 executable kafka-device
   main-is:          Main.hs
+  other-modules:    Network.UI.Kafka
+                    Network.UI.Kafka.Types
   build-depends:    base
                ,    aeson
                ,    binary
@@ -54,6 +56,9 @@ executable kafka-device
 
 executable kafka-device-keyboard
   main-is:          MainKeyboard.hs
+  other-modules:    Network.UI.Kafka
+                    Network.UI.Kafka.Keyboard
+                    Network.UI.Kafka.Types
   build-depends:    base
                ,    aeson
                ,    binary

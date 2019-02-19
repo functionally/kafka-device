@@ -10,8 +10,9 @@ Produce and consume events on Kafka topics.
 -}
 
 
-{-# LANGUAGE DeriveGeneric   #-}
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DeriveGeneric    #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE RecordWildCards  #-}
 
 
 module Network.UI.Kafka (
