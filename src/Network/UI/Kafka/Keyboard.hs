@@ -30,8 +30,8 @@ keyboardLoop topicConnection sensor =
     hSetBuffering stdin NoBuffering
     hSetEcho stdin False
     producerLoop topicConnection sensor
-      . fmap (: [])
-      $ KeyEvent
+      .   fmap (: [])
+      $   KeyEvent
       <$> getChar
       <*> return Nothing
       <*> return Nothing
