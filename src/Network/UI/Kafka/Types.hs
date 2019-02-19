@@ -1,16 +1,16 @@
 {-|
-Module      :  Network.UI.Kafka.Types
-Copyright   :  (c) 2016 Brian W Bush
+Module      :  $Headers
+Copyright   :  (c) 2016-19 Brian W Bush
 License     :  MIT
-Maintainer  :  Brian W Bush <consult@brianwbush.info>
-Stability   :  Experimental
-Portability :  Stable
+Maintainer  :  Brian W Bush <code@functionally.io>
+Stability   :  Beta
+Portability :  Portable
 
 Event types.
 -}
 
 
-{-# LANGUAGE DeriveGeneric    #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 
 module Network.UI.Kafka.Types (

@@ -1,17 +1,16 @@
 {-|
-Module      :  $Header$
-Copyright   :  (c) 2016-17 Brian W Bush
+Module      :  $Headers
+Copyright   :  (c) 2016-19 Brian W Bush
 License     :  MIT
-Maintainer  :  Brian W Bush <consult@brianwbush.info>
-Stability   :  Experimental
-Portability :  Stable
+Maintainer  :  Brian W Bush <code@functionally.io>
+Stability   :  Production
+Portability :  Portable
 
 Interpret user-interfaces events on Kafka topics.
 -}
 
 
 {-# LANGUAGE DeriveGeneric        #-}
-{-# LANGUAGE OverloadedStrings    #-}
 {-# LANGUAGE RecordWildCards      #-}
 
 {-# OPTIONS_GHC -fno-warn-orphans #-}

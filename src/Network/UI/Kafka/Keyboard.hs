@@ -1,10 +1,10 @@
 {-|
-Module      :  $Header$
-Copyright   :  (c) 2016-17 Brian W Bush
+Module      :  $Headers
+Copyright   :  (c) 2016-19 Brian W Bush
 License     :  MIT
-Maintainer  :  Brian W Bush <consult@brianwbush.info>
-Stability   :  Experimental
-Portability :  Stable
+Maintainer  :  Brian W Bush <code@functionally.io>
+Stability   :  Production
+Portability :  Portable
 
 Produce events on a Kafka topic from standard input.
 -}
@@ -30,7 +30,7 @@ keyboardLoop topicConnection sensor =
     hSetBuffering stdin NoBuffering
     hSetEcho stdin False
     producerLoop topicConnection sensor
-      $ fmap (: [])
+      . fmap (: [])
       $ KeyEvent
       <$> getChar
       <*> return Nothing
