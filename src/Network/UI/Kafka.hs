@@ -24,9 +24,11 @@ module Network.UI.Kafka (
 -- * Consumption
 , ConsumerCallback
 , consumerLoop
+, rawConsumerLoop
 -- * Production
 , ProducerCallback
 , producerLoop
+, rawProducerLoop
 ) where
 
 
@@ -84,18 +86,30 @@ type ConsumerCallback =  Sensor -- ^ The name of the sensor producing the event.
 consumerLoop :: TopicConnection             -- ^ The Kafka topic name and connection information.
              -> ConsumerCallback            -- ^ The consumer callback.
              -> IO (ExitAction, LoopAction) -- ^ Action to create the exit and loop actions.
-consumerLoop TopicConnection{..} consumer =
+consumerLoop topicConnection =
+  let
+    fromMessage :: Message -> (Sensor, Event)
+    fromMessage message =
+      let
+        (_, _, _, Key (Just (KBytes k)), Value (Just (KBytes v))) = _messageFields message
+      in
+        (unpack k, decode $ fromStrict v)
+  in
+    rawConsumerLoop topicConnection fromMessage
+      . uncurry
+
+
+-- | Consume messages for a Kafka topic.
+rawConsumerLoop :: TopicConnection             -- ^ The Kafka topic name and connection information.
+                -> (Message -> a)              -- ^ The decoder.
+                -> (a -> IO ())                -- ^ The consumer callback.
+                -> IO (ExitAction, LoopAction) -- ^ Action to create the exit and loop actions.
+rawConsumerLoop TopicConnection{..} fromMessage consumer =
   do
     exitFlag <- newEmptyMVar :: IO (MVar ())
     let
       topic' = fromString topic
       address' = fromString *** fromIntegral $ address
-      fromMessage :: Message -> (Sensor, Event)
-      fromMessage message =
-        let
-          (_, _, _, Key (Just (KBytes k)), Value (Just (KBytes v))) = _messageFields message
-        in
-          (unpack k, decode $ fromStrict v)
       loop offset =
         do
           result <- withAddressHandle address' $ \handle -> fetch' handle =<< fetchRequest offset 0 topic'
@@ -104,7 +118,7 @@ consumerLoop TopicConnection{..} consumer =
             messages = fromMessage . _tamMessage <$> fetchMessages result
           liftIO
             $ do
-              mapM_ (uncurry consumer) messages
+              mapM_ consumer messages
               threadDelay 100 -- FIXME: Is a thread delay really necessary in order not to miss messages?  Why?
           running <- liftIO $ isEmptyMVar exitFlag
           when running
@@ -128,7 +142,19 @@ producerLoop :: TopicConnection             -- ^ The Kafka topic name and connec
              -> Sensor                      -- ^ The name of the sensor producing the event.
              -> ProducerCallback            -- ^ The producer callback.
              -> IO (ExitAction, LoopAction) -- ^ Action to create the exit and loop actions.
-producerLoop TopicConnection{..} sensor producer =
+producerLoop topicConnection sensor =
+  let
+    toMessage = makeKeyedMessage (pack sensor) . toStrict . encode
+  in
+    rawProducerLoop topicConnection toMessage
+
+
+-- | Produce messages for a Kafka topic.
+rawProducerLoop :: TopicConnection             -- ^ The Kafka topic name and connection information.
+                -> (a -> Message)              -- ^ The encoder.
+                -> IO [a]                      -- ^ The producer callback.
+                -> IO (ExitAction, LoopAction) -- ^ Action to create the exit and loop actions.
+rawProducerLoop TopicConnection{..} toMessage producer =
   do
     exitFlag <- newEmptyMVar :: IO (MVar ())
     let
@@ -138,7 +164,7 @@ producerLoop TopicConnection{..} sensor producer =
           void
             $ produceMessages
             $ map
-              (TopicAndMessage (fromString topic) . makeKeyedMessage (pack sensor) . toStrict . encode)
+              (TopicAndMessage (fromString topic) . toMessage)
               events
           running <- liftIO $ isEmptyMVar exitFlag
           when running
