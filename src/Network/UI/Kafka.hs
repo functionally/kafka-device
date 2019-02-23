@@ -162,12 +162,12 @@ rawProducerLoop TopicConnection{..} toMessage producer =
         do
           events <- liftIO producer
           void
-            $ produceMessages
+            . produceMessages
             $ map
               (TopicAndMessage (fromString topic) . toMessage)
               events
           running <- liftIO $ isEmptyMVar exitFlag
-          when running
+          when (running && not (null events))
             loop
     return
       (
