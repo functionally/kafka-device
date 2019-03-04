@@ -5,7 +5,7 @@
 
 mkDerivation {
   pname = "kafka-device";
-  version = "1.0.2.0";
+  version = "1.0.2.1";
   src = ./.;
   isLibrary = true;
   isExecutable = true;

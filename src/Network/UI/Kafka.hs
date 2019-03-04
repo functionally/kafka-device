@@ -33,7 +33,7 @@ module Network.UI.Kafka (
 
 
 import Control.Arrow ((***))
-import Control.Concurrent (MVar, newEmptyMVar, isEmptyMVar, threadDelay, tryPutMVar)
+import Control.Concurrent (MVar, newEmptyMVar, isEmptyMVar, threadDelay, tryPutMVar, yield)
 import Control.Monad (void, when)
 import Control.Monad.Except (liftIO)
 import Data.Aeson.Types (FromJSON, ToJSON)
@@ -167,7 +167,9 @@ rawProducerLoop TopicConnection{..} toMessage producer =
               (TopicAndMessage (fromString topic) . toMessage)
               events
           running <- liftIO $ isEmptyMVar exitFlag
-          when (running && not (null events))
+          when (null events)
+            $ liftIO yield
+          when running
             loop
     return
       (
