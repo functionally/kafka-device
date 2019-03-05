@@ -5,8 +5,8 @@ pipelines:
   default:
     - step:
         name: build
-        caches:
-          - cabal
+#       caches:
+#         - cabal
         script:
           - cabal update
           - cabal build
