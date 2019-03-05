@@ -9,8 +9,8 @@ pipelines:
           - cabal
         script:
           - cabal update
-          - cabal configure
           - cabal install --dependencies-only
+          - cabal configure
           - cabal build
         artifacts:
           - dist/build/**
