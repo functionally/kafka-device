@@ -5,8 +5,15 @@ pipelines:
   default:
     - step:
         name: build
+        caches:
+          - cabal
         script:
           - cabal update
+          - cabal configure
           - cabal build
         artifacts:
           - dist/build/**
+
+definitions:
+  caches:
+    cabal: ~/.cabal
