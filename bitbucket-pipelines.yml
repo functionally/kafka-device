@@ -4,4 +4,5 @@ pipelines:
   default:
     - step:
         script:
+          - cabal update
           - cabal install
